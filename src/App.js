@@ -1,7 +1,7 @@
 import React from 'react';
 import CardList from './CardList';
-import {robots} from './robots';
 import SearchBox from './SearchBox';
+import Scroll from './Scroll';
 import './App.css';
 
 // in order to use State we need class
@@ -10,14 +10,17 @@ class App extends React.Component {
     constructor() {
         super()
         this.state = {
-            robots: robots,
+            robots: [],
             searchField: ''
         }
     }
 
-    // componentDidMount() {
-    //     console.log("componentDidMount");
-    // }
+    // using JSONPlaceholder API to receive users as robots
+    componentDidMount() {
+        fetch("https://jsonplaceholder.typicode.com/users")
+            .then(response => response.json()) // converting received response to JSON
+            .then(users => this.setState({robots: users}));
+    }
 
     // change of syntax so that 'this' always refers to where it is created
     onSearchChange = (event) => {
@@ -28,16 +31,24 @@ class App extends React.Component {
         const filteredRobots = this.state.robots.filter(robot => {
             return robot.name.toLowerCase().includes(this.state.searchField.toLowerCase());
         })
-        console.log("render");
+        // console.log("render");
 
-        return (
-            <div className='tc'>
-                <h1 className='f1'>RoboFriends</h1>
-                <SearchBox searchChange={this.onSearchChange} />
-                <hr />
-                <CardList robots={filteredRobots} />
-            </div>
-        )
+        // if API takes long time to return response
+        if (this.state.robots.length === 0) {
+            return <h1>LOADING...</h1>           
+        } else {
+            return (
+                <div className='tc'>
+                    <h1 className='f1'>RoboFriends</h1>
+                    <SearchBox searchChange={this.onSearchChange} />
+                    <hr />
+                    {/* making search bar fix with scroll */}
+                    <Scroll>
+                        <CardList robots={filteredRobots} />
+                    </Scroll>
+                </div>
+            )
+        }
     }
 }
 
