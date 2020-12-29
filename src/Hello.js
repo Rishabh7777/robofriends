@@ -1,5 +1,3 @@
-import './Hello.css';
-
 function Hello(props) {
     return (
         <div className='f1 tc'>
