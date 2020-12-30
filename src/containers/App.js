@@ -3,6 +3,7 @@ import CardList from '../components/CardList';
 import SearchBox from '../components/SearchBox';
 import Scroll from '../components/Scroll';
 import './App.css';
+import ErrorBoundary from '../components/ErrorBoundary'
 
 // in order to use State we need class
 // 'state' is props given by parent to child
@@ -44,7 +45,9 @@ class App extends React.Component {
                     <hr />
                     {/* making search bar fix with scroll */}
                     <Scroll>
-                        <CardList robots={filteredRobots} />
+                        <ErrorBoundary>
+                            <CardList robots={filteredRobots} />
+                        </ErrorBoundary>
                     </Scroll>
                 </div>
             )
