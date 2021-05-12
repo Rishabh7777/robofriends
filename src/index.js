@@ -2,16 +2,20 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import 'tachyons';
 import { Provider } from 'react-redux';
-import { createStore, applyMiddleware } from 'redux';
+import { createStore, applyMiddleware, combineReducers } from 'redux';
 import { createLogger } from 'redux-logger';
+// redux-thunk is middleware
+import thunk from 'redux-thunk';
 import reportWebVitals from './reportWebVitals';
 import App from './containers/App';
-import { searchRobots } from './reducers.js';
+import { searchRobots, requestRobots } from './reducers.js';
 import './index.css';
 
 
 const logger = createLogger();
-const store = createStore(searchRobots, applyMiddleware(logger));
+const rootReducer = combineReducers({searchRobots, requestRobots})
+// middleware is ordered, thunk first and then logger
+const store = createStore(rootReducer, applyMiddleware(thunk, logger));
 
 ReactDOM.render(
   <React.StrictMode>

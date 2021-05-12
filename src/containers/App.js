@@ -4,52 +4,42 @@ import CardList from '../components/CardList';
 import SearchBox from '../components/SearchBox';
 import ErrorBoundary from '../components/ErrorBoundary';
 import './App.css';
-import { setSearchField } from '../action.js';
+import { setSearchField, requestRobots } from '../action.js';
 
 const mapStateToProps = (state) => {
     return {
-        searchField: state.searchField
+        searchField: state.searchRobots.searchField,
+        robots: state.requestRobots.robots,
+        isPending: state.requestRobots.isPending,
+        error: state.requestRobots.error
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        onSearchChange: (event) => dispatch(setSearchField(event.target.value))
+        onSearchChange: (event) => dispatch(setSearchField(event.target.value)),
+        onRequestRobots: () => dispatch(requestRobots())
     }
 }
 
 // in order to use State we need class
 // 'state' is props given by parent to child
 class App extends React.Component {
-    constructor() {
-        super()
-        this.state = {
-            robots: []
-            // searchField: ''
-        }
-    }
+    // no need of constructor as we are using redux
 
     // using JSONPlaceholder API to receive users as robots
     componentDidMount() {
-        // console.log(this.props.store);
-        fetch("https://jsonplaceholder.typicode.com/users")
-            .then(response => response.json()) // converting received response to JSON
-            .then(users => this.setState({robots: users}));
+        this.props.onRequestRobots();
     }
-
-    // change of syntax so that 'this' always refers to where it is created
-    // onSearchChange = (event) => {
-    //     this.setState({searchField: event.target.value});
-    // }
     
     render() {
-        const filteredRobots = this.state.robots.filter(robot => {
+        const filteredRobots = this.props.robots.filter(robot => {
             return robot.name.toLowerCase().includes(this.props.searchField.toLowerCase());
         })
         // console.log("render");
 
         // if API takes long time to return response
-        if (this.state.robots.length === 0) {
+        if (this.props.isPending === true) {
             return <h1>LOADING...</h1>           
         } else {
             return (
